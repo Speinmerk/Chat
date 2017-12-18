@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="center" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+    <TextArea fx:id="jta" editable="false" wrapText="true" VBox.vgrow="ALWAYS">
+    </TextArea>
+    <GridPane alignment="BOTTOM_CENTER" minWidth="-Infinity" prefWidth="300.0">
+        <TextField fx:id="jtf" minWidth="256.0" onAction="#sendMsg" prefWidth="600.0" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <Button minWidth="44.0" onAction="#sendMsg" prefWidth="44.0" GridPane.columnIndex="1" GridPane.rowIndex="0">Enter</Button>
+    </GridPane>
+
+</VBox>
