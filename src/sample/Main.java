@@ -12,7 +12,9 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Chat");
-        primaryStage.setScene(new Scene(root, 300, 400));
+        Scene scene = new Scene(root, 300, 400);
+        scene.getStylesheets().add(0, "styles/style.css");
+        primaryStage.setScene(scene);
         primaryStage.setMinWidth(316);
         primaryStage.setMinHeight(439);
         primaryStage.show();
