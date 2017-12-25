@@ -27,6 +27,13 @@ public class Main {
                         if(in.hasNext()){
                             System.out.println(in.nextLine());
                         }
+                    }
+                }
+            }).start();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true) {
                         if(scanner.hasNext()){
                             printWriter.println("Echo: " + scanner.nextLine());
                             printWriter.flush();
