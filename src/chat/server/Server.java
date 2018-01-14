@@ -1,6 +1,7 @@
 package chat.server;
 
 import chat.ServerConst;
+import chat.Server_API;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -8,13 +9,16 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Vector;
 
-public class Server implements ServerConst{
+public class Server implements ServerConst, Server_API{
+
     private Vector<ClientHandler> clients;
     private HashMap<String, ClientHandler> nickClients;
     private AuthService authService;
+
     public AuthService getAuthService(){
         return authService;
     }
+
     public Server(){
         ServerSocket server;
         Socket socket;
@@ -27,29 +31,50 @@ public class Server implements ServerConst{
             System.out.println("Server is up and running! Awaiting for connections");
             while(true){
                 socket = server.accept();
-                clients.add(new ClientHandler(this, socket));
+                clients.add(new ClientHandler(this, socket, TIME_OUT_SECOND));
                 System.out.println("Client has connected!");
             }
         }catch(IOException e){
         }finally{
         }
     }
-    public void addNickClients(String login, ClientHandler clientHandler) {
-        nickClients.put(login, clientHandler);
+    // Добавление нового клиента в обратный список
+    public void addNickClients(String nick, ClientHandler clientHandler) {
+        nickClients.put(nick, clientHandler);
     }
-    public void broadcast(String nick, String msg){
-        if(nick == null)
-            for(ClientHandler client : clients)
+    // Отправка сообщения всем подключенным клиентам
+    public void broadcast(String msg){
+        for(ClientHandler client : clients)
+            if(!client.isNickNull())
                 client.sendMessage(msg);
-        else nickClients.get(nick).sendMessage(msg);
+    }
+    // Отправка приватного сообщения
+    public void sendPrivateMessage(ClientHandler from, String to, String msg){
+        if(isNickBusy(to)){
+            nickClients.get(to).sendMessage("from " + from.getNick() + ": " + msg);
+            from.sendMessage("to " + to + ": " + msg);
+        } else from.sendMessage("User not found");
+    }
+    // Отправка списка подключенных клиентов
+    public void broadcastUsersList(){
+        StringBuffer sb = new StringBuffer(USERS_LIST);
+        for(ClientHandler client : clients){
+            if(!client.isNickNull())
+                sb.append(" " + client.getNick());
+        }
+        for(ClientHandler client : clients){
+            if(!client.isNickNull())
+                client.sendMessage(sb.toString());
+        }
+    }
+    // Удаление отключенного клиента
+    public void unSubscribeMe(String nick, ClientHandler c){
+        clients.remove(c);
+        nickClients.remove(nick, c);
+        broadcastUsersList();
     }
 
-    public void unSubscribeMe(String login, ClientHandler c){
-        clients.remove(c);
-        nickClients.remove(login, c);
-    }
-    public boolean isNickBusy(String nick){
-        if(nickClients.containsKey(nick)) return true;
-        else return false;
+    public Boolean isNickBusy(String nick){
+        return nickClients.containsKey(nick);
     }
 }

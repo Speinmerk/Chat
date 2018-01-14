@@ -7,6 +7,8 @@ import java.awt.event.WindowEvent;
 
 public class ChatWindow extends JFrame{
     private JTextArea jTextArea;
+    private JTextArea usersList;
+    private JScrollPane jspUsers;
     private JTextField jTextField;
     private JTextField jtfLogin;
     private JPasswordField jtfPassword;
@@ -22,11 +24,15 @@ public class ChatWindow extends JFrame{
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(400, 400);
         jTextArea = new JTextArea();
+        usersList = new JTextArea();
         jTextField = new JTextField();
         jTextField.setPreferredSize(new Dimension(200, 20));
         JScrollPane jScrollPane = new JScrollPane(jTextArea);
         jTextArea.setEditable(false);
         jTextArea.setLineWrap(true);
+        usersList.setEditable(false);
+        usersList.setPreferredSize(new Dimension(100, 1));
+        jspUsers = new JScrollPane(usersList);
         JButton jButtonSend = new JButton("Send");
 
         jPanelBottom = new JPanel();
@@ -43,7 +49,9 @@ public class ChatWindow extends JFrame{
 
         add(jScrollPane, BorderLayout.CENTER);
         add(jPanelBottom, BorderLayout.SOUTH);
+        add(jspUsers, BorderLayout.EAST);
         add(top, BorderLayout.NORTH);
+
         jButtonSend.addActionListener(e -> sendMessage());
         jTextField.addActionListener(e -> sendMessage());
         jbAuth.addActionListener(e -> auth());
@@ -52,7 +60,11 @@ public class ChatWindow extends JFrame{
             @Override
             public void windowClosing(WindowEvent e){
                 super.windowClosing(e);
-                client.disconnect();
+                try {
+                    client.disconnect();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
             }
         });
         switchWindows();
@@ -76,5 +88,10 @@ public class ChatWindow extends JFrame{
         top.setVisible(!client.isAuthorized());
         jPanelBottom.setVisible(client.isAuthorized());
     }
-
+    public void showUsersList(String[] users){
+        usersList.setText("");
+        for(int i = 1; i < users.length; i++){
+            usersList.append(users[i] + "\n");
+        }
+    }
 }

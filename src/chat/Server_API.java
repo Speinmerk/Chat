@@ -1,8 +1,10 @@
 package chat;
 
 public interface Server_API {
+    String SYSTEM_SYMBOL = "/";
     String CLOSE_CONNECTION = "/end";
     String AUTH = "/auth";
     String AUTH_SUCCESSFUL = "/authok";
-    String MSG_TO_NICK = "/w";
+    String PRIVATE_MESSAGE = "/w";
+    String USERS_LIST = "/userslist";
 }

@@ -7,6 +7,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class ClientConnection implements ServerConst, Server_API {
     Socket socket;
@@ -29,6 +30,7 @@ public class ClientConnection implements ServerConst, Server_API {
             this.in = new DataInputStream(socket.getInputStream());
             new Thread(() -> {
                 try{
+                    // Авторизация клиента
                     while(true){
                         String msg = in.readUTF();
                         if(msg.startsWith(AUTH_SUCCESSFUL)){
@@ -38,9 +40,17 @@ public class ClientConnection implements ServerConst, Server_API {
                         }
                         view.showMessage(msg);
                     }
+                    // Прием сообщений
                     while(true){
                         String msg = in.readUTF();
-                        view.showMessage(msg);
+                        if(msg.startsWith(SYSTEM_SYMBOL)){
+                            if(msg.startsWith(USERS_LIST)){
+                                String[] users = msg.split(" ");
+                                Arrays.sort(users);
+                                view.showUsersList(users);
+                            }
+                        }else
+                            view.showMessage(msg);
                     }
                 }catch(IOException e){
                     e.printStackTrace();
